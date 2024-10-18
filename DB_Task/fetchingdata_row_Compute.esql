@@ -1,0 +1,40 @@
+
+
+CREATE COMPUTE MODULE fetchingdata_row_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		   CALL CopyEntireMessage();
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		--SET OutputRoot = InputRoot;
+		DECLARE var Row;
+		
+		SET var.result[] = PASSTHRU('Select * from STUDENT');
+		DECLARE inref REFERENCE TO var.result[1];
+		CREATE FIELD OutputRoot.JSON.Data.Students Type JSON.Array;
+		DECLARE outref REFERENCE TO OutputRoot.JSON.Data.Students;
+		
+		DECLARE i INTEGER 1;
+		WHILE LASTMOVE(inref) DO
+			SET outref.Item[i].Student.Id = inref.ID;
+			SET outref.Item[i].Student.Name = inref.NAME;
+			SET outref.Item[i].Student.Age = inref.AGE;
+			SET i = i + 1;
+			MOVE inref NEXTSIBLING;
+		END WHILE;
+		
+	END;
+END MODULE;
