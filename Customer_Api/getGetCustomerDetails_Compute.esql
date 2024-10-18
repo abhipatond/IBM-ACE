@@ -1,0 +1,44 @@
+
+
+
+
+CREATE COMPUTE MODULE getGetCustomerDetails_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		CALL CopyEntireMessage();
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		
+		DECLARE inref REFERENCE TO InputRoot.JSON.Data.CustomerInfo;
+		DECLARE query CHARACTER 'SELECT * FROM CUSTOMER WHERE CUSTOMERID=?';
+
+		SET Environment.Var.Data[] = PASSTHRU(query, inref.CustomerId);
+
+		IF inref.CustomerId IS NOT NULL THEN
+
+			IF CARDINALITY(Environment.Var.Data[]) > 0 THEN
+
+				SET OutputRoot.JSON.Data.CustomerDetails[] = Environment.Var.Data[];
+			ELSE
+
+				SET OutputRoot.JSON.Data.Message = 'No Data Found for CustomerId: ' || CAST(inref.CustomerId AS CHARACTER);
+			END IF;
+		ELSE
+			SET OutputRoot.JSON.Data.Message = 'Enter a valid Customer ID';
+		END IF;
+
+	END;
+END MODULE;
