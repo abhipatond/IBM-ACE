@@ -19,7 +19,12 @@ CREATE COMPUTE MODULE File_mf_Compute
 	END;
 
 	CREATE PROCEDURE CopyEntireMessage() BEGIN
-	
+			--Using Wildcar 
+			/*DECLARE mytime TIMESTAMP;
+			SET mytime = CURRENT_TIMESTAMP;
+			SET OutputLocalEnvironment.Wildcard.WildcardMatch = 'OUTPUT' || CAST(mytime AS CHARACTER format '_dd_MM_yy_HH_mm_ss') || '.txt';
+			*/
+			--using file override
 			SET OutputLocalEnvironment.Destination.File.Name='File' || CAST(count as CHARACTER) ||'.txt';
 			SET count = count + 1;
 			SET OutputRoot = InputRoot;
