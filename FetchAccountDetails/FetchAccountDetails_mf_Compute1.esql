@@ -1,0 +1,38 @@
+
+
+
+CREATE COMPUTE MODULE FetchAccountDetails_mf_Compute1
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		CALL CopyEntireMessage();
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		DECLARE error_desc CHARACTER InputExceptionList.*[<].*[<].*[<].*[<].UserException.Text;
+		DECLARE esb_error_desc CHARACTER InputExceptionList.*[<].*[<].*[<].*[<].UserException.Insert[1].Text;
+		DECLARE msg_id CHARACTER InputLocalEnvironment.Destination.HTTP.RequestIdentifier;
+	
+		CREATE FIELD OutputRoot.JSON.Data;
+		DECLARE outref REFERENCE TO OutputRoot.JSON.Data;
+		CREATE LASTCHILD OF outref name 'message' value 'failure';
+		CREATE LASTCHILD OF outref name 'statusCode' value 'ESB-APPC-998';
+		CREATE LASTCHILD OF outref.error name 'error_desc' value error_desc;
+		CREATE LASTCHILD OF outref.error name 'messagId' value cast(msg_id as CHARACTER CCSID InputRoot.Properties.CodedCharSetId);
+		CREATE LASTCHILD OF outref.error.additionalData name 'esb_error_code' value '';
+		CREATE LASTCHILD OF outref.error.additionalData name 'esb_error_desc' value esb_error_desc;		
+		
+
+	END;
+END MODULE;
