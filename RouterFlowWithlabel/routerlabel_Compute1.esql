@@ -24,7 +24,5 @@ CREATE COMPUTE MODULE routerlabel_Compute1
 
 		SET OutputLocalEnvironment.Destination.HTTP.RequestURL = url1;
 		set OutputRoot = InputRoot;
-
 	END;
-
 END MODULE;
