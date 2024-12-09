@@ -1,0 +1,36 @@
+
+
+CREATE COMPUTE MODULE XMLToCSV_mf_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		 CALL CopyEntireMessage();
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END; 
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+--		SET OutputRoot.DFDL.Student.Details = InputRoot.XMLNSC.Student.Details;
+		DECLARE i INTEGER 1;
+		DECLARE inref REFERENCE TO InputRoot.XMLNSC.root.body[1];
+		
+		WHILE LASTMOVE(inref) DO
+			SET OutputRoot.DFDL.xmltocsv.record[i].field1 = InputRoot.XMLNSC.root.body[i].body_elem1;
+			SET OutputRoot.DFDL.xmltocsv.record[i].field2 = InputRoot.XMLNSC.root.body[i].body_elem2;
+			SET OutputRoot.DFDL.xmltocsv.record[i].field3 = InputRoot.XMLNSC.root.body[i].body_elem3;
+			set i = i+1;
+			MOVE inref NEXTSIBLING;
+		END WHILE; 
+
+--		SET OutputRoot.DFDL.xmltocsv = InputRoot.XMLNSC.root;
+	END;
+END MODULE;

@@ -1,0 +1,25 @@
+
+CREATE COMPUTE MODULE fixedtocsv_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		CALL CopyEntireMessage();
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		set OutputRoot.DFDL.csv.header.head_field1 = InputRoot.DFDL.fixed.header.head_elem1;
+		set OutputRoot.DFDL.csv.header.head_field2 =InputRoot.DFDL.fixed.header.head_elem2;
+		set OutputRoot.DFDL.csv.header.head_field3 = InputRoot.DFDL.fixed.header.head_elem3;
+		DECLARE i INTEGER 1;
+		DECLARE var REFERENCE TO InputRoot.DFDL.fixed.body[1];
+		WHILE LASTMOVE(var) DO
+			SET OutputRoot.DFDL.csv.record[i].field1= InputRoot.DFDL.fixed.body[i].body_elem1;
+			SET OutputRoot.DFDL.csv.record[i].field2= InputRoot.DFDL.fixed.body[i].body_elem2;
+			SET OutputRoot.DFDL.csv.record[i].field3= InputRoot.DFDL.fixed.body[i].body_elem3;
+			SET i = i+1;
+			MOVE var NEXTSIBLING;
+		END WHILE;
+
+	END;
+END MODULE;
