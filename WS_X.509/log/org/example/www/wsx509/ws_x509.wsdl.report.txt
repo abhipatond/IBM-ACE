@@ -1,0 +1,22 @@
+
+
+Importing file: C:\Project\WS_X.509\ws_x509.wsdl
+
+The WSDL import will proceed with bindings ws_x509SOAP.
+Creating wsdl schema document for file:///C:/Project/WS_X.509/ws_x509.wsdl.
+Parsing wsdl binding {http://www.example.org/ws_x509/}ws_x509SOAP.
+Parsing wsdl binding input NewOperation.
+Parsing wsdl binding output NewOperation.
+Processing doc style for operation NewOperation.
+Populating WSDL schema ws_x509.xsd.
+Creating file ws_x509.xsd in the workspace.
+Creating file ws_x509_InlineSchema1.xsd in the workspace.
+Copying source WSDL ws_x509.wsdl to ws_x509.wsdl.
+
+Elapsed time processing this message definition file: 0.197 seconds
+Number of warnings for this message definition file: 0
+
+
+Number of files processed: 1
+
+
